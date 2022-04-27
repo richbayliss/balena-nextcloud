@@ -1,6 +1,7 @@
 version: "2.1"
 
 volumes:
+  caddy:
   html:
   mysql:
 
@@ -26,12 +27,21 @@ services:
   # https://hub.docker.com/_/nginx/
   nginx:
     build: nginx
-    ports:
-      - 80:80/tcp
     volumes:
       - html:/var/www/html:ro
     depends_on:
       - nextcloud
+
+  caddy:
+    build: caddy
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - html:/var/www/html:ro
+      - caddy:/data
+    depends_on:
+      - nginx
 
   # https://hub.docker.com/r/yobasystems/alpine-mariadb
   mariadb:
